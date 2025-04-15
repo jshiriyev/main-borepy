@@ -1,20 +1,7 @@
-from matplotlib import pyplot
-
-import numpy
-
-from scipy import integrate
-
-from scipy.optimize import root_scalar
+import numpy as np
 
 from scipy.sparse import csr_matrix as csr
 from scipy.sparse.linalg import spsolve as sps
-
-from scipy.special import expi
-
-from scipy.special import j0 as BJ0
-from scipy.special import j1 as BJ1
-from scipy.special import y0 as BY0
-from scipy.special import y1 as BY1
 
 class finite():
 
@@ -57,11 +44,11 @@ class finite():
 
         #creating time steps
         timesteps = tD[1:]-tD[:-1]
-        timesteps = numpy.insert(timesteps,0,timesteps[0])
+        timesteps = np.insert(timesteps,0,timesteps[0])
 
         #initialization of pressure arrays
-        press = numpy.zeros(self.size)
-        pwell = numpy.zeros(timesteps.size+1)
+        press = np.zeros(self.size)
+        pwell = np.zeros(timesteps.size+1)
 
         N,indices = self.size,self.indices
 
@@ -99,7 +86,7 @@ class finite():
         Nimpaired = self.Nimpaired
         Nunharmed = self.Nunharmed
 
-        Nimpaired_temp = int(numpy.ceil(r-1).tolist())
+        Nimpaired_temp = int(np.ceil(r-1).tolist())
 
         if Nimpaired_temp == 0:
             Nimpaired = 0
@@ -113,7 +100,7 @@ class finite():
 
         unharmed = self.loggrid(node,R,Nunharmed-1)
 
-        return numpy.append(impaired,unharmed[1:])
+        return np.append(impaired,unharmed[1:])
 
     def setnodes(self):
 
@@ -121,7 +108,7 @@ class finite():
 
     def gridalpha(self):
 
-        array = numpy.ones(self.radii_grid.size)
+        array = np.ones(self.radii_grid.size)
 
         array[self.radii_grid<self.rskin] = self.alpha
 
@@ -129,9 +116,9 @@ class finite():
 
     def nodealpha(self):
 
-        radrad = numpy.log(self.radii_grid[1:]/self.radii_grid[:-1])
-        nodrad = numpy.log(self.radii_node/self.radii_grid[:-1])/self.alpha_grid[:-1]
-        radnod = numpy.log(self.radii_grid[1:]/self.radii_node)/self.alpha_grid[1:]
+        radrad = np.log(self.radii_grid[1:]/self.radii_grid[:-1])
+        nodrad = np.log(self.radii_node/self.radii_grid[:-1])/self.alpha_grid[:-1]
+        radnod = np.log(self.radii_grid[1:]/self.radii_node)/self.alpha_grid[1:]
 
         return radrad/(nodrad+radnod)
 
@@ -172,7 +159,7 @@ class finite():
     @property
     def skin(self):
 
-        return (1/self.alpha-1)*numpy.log(self.rskin)
+        return (1/self.alpha-1)*np.log(self.rskin)
 
     @property
     def size(self):
@@ -182,16 +169,16 @@ class finite():
     @property
     def indices(self):
 
-        return numpy.arange(self.size)
+        return np.arange(self.size)
 
     @staticmethod
     def loggrid(start,stop,number=50,ratioFlag=False):
 
-        centers = numpy.zeros(number+2)
+        centers = np.zeros(number+2)
 
         ratio = (stop/start)**(1/number)
 
-        centers[1] = start*numpy.log(ratio)/(1-1/ratio)
+        centers[1] = start*np.log(ratio)/(1-1/ratio)
         centers[0] = centers[1]/ratio
 
         for i in range(1,number+1):
@@ -205,27 +192,29 @@ class finite():
     @staticmethod
     def logmean(radii):
 
-        radii = numpy.array(radii)
+        radii = np.array(radii)
 
-        return (radii[1:]-radii[:-1])/numpy.log(radii[1:]/radii[:-1])
+        return (radii[1:]-radii[:-1])/np.log(radii[1:]/radii[:-1])
 
     @staticmethod
     def width(radii):
 
-        radii = numpy.array(radii)
+        radii = np.array(radii)
 
         return radii[1:]-radii[:-1]
 
 if __name__ == "__main__":
 
+    from matplotlib import pyplot as plt
+
     print(finite.setnodes(10,r=2.5))
 
     # tD = 1e-2
 
-    # umin = numpy.sqrt(1/tD)/1e6
-    # umax = numpy.sqrt(1/tD)*1e5
+    # umin = np.sqrt(1/tD)/1e6
+    # umax = np.sqrt(1/tD)*1e5
 
-    # u = numpy.logspace(numpy.log10(umin),numpy.log10(umax),2000)
+    # u = np.logspace(np.log10(umin),np.log10(umax),2000)
 
     # y1 = everdingen.pressure_integrand(u,tD)
     # y2 = everdingen.pressure_integrand(u,1e8)
@@ -240,14 +229,14 @@ if __name__ == "__main__":
 
     # print(f"{agarwal.pressure(1e8,1e5,0)[0]:8.5f}")
 
-    # pyplot.loglog(u,y1)
-    # pyplot.loglog(u,y1)
-    # pyplot.loglog(u,y2)
-    # pyplot.loglog(u,y3)
-    # pyplot.loglog(u,y4)
-    # pyplot.loglog(u,y5)
+    # plt.loglog(u,y1)
+    # plt.loglog(u,y1)
+    # plt.loglog(u,y2)
+    # plt.loglog(u,y3)
+    # plt.loglog(u,y4)
+    # plt.loglog(u,y5)
 
-    # pyplot.show()
+    # plt.show()
 
 
 

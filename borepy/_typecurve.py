@@ -7,8 +7,8 @@ class TypeCurve():
 		wcond 	: well instance
 		immob 	: immobile second phase instance
 		tcomp 	: total compressibility
+		
 		"""
-
 		self.rrock = rrock
 		self.phase = phase
 		self.tcomp = tcomp
